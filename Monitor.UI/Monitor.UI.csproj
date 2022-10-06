@@ -50,6 +50,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="CommunityToolkit.Maui" Version="1.3.0" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Monitor.Shared\Monitor.Shared.csproj" />
       <ProjectReference Include="..\Monitor.UI.Blazor\Monitor.UI.Blazor.csproj" />
     </ItemGroup>
 

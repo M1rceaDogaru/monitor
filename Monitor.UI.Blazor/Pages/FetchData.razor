@@ -1,13 +1,13 @@
 ﻿@page "/fetchdata"
 @inject HttpClient Http
 
-<PageTitle>Weather forecast</PageTitle>
+<PageTitle>Databases</PageTitle>
 
-<h1>Weather forecast</h1>
+<h1>Databases</h1>
 
-<p>This component demonstrates fetching data from the server.</p>
+<p>Databases currently being monitored</p>
 
-@if (forecasts == null)
+@if (databases == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -16,20 +16,20 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Host</th>
+                <th>Instance</th>
+                <th>Database</th>
+                <th>Users</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var database in databases)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@database.Host</td>
+                    <td>@database.Instance</td>
+                    <td>@database.Database</td>
+                    <td>@database.Users.Count</td>
                 </tr>
             }
         </tbody>
@@ -37,21 +37,18 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private List<DatabaseState>? databases;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        databases = await Http.GetFromJsonAsync<List<DatabaseState>>("api/monitor");
     }
 
-    public class WeatherForecast
-    {
-        public DateTime Date { get; set; }
+    private class DatabaseState {
+        public string Host { get; set; }
+        public string Instance { get; set; }
+        public string Database { get; set; }
 
-        public int TemperatureC { get; set; }
-
-        public string? Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        public List<string> Users { get; set; }
     }
 }

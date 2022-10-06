@@ -1,9 +1,18 @@
-﻿using Orleans.Streams;
+﻿using Microsoft.AspNetCore.SignalR;
+using Monitor.Shared;
+using Orleans.Streams;
 
 namespace Monitor.API
 {
     public class NotificationsObserver : IAsyncObserver<string>
     {
+        private readonly IHubContext<NotificationsHub> _hubContext;
+
+        public NotificationsObserver(IHubContext<NotificationsHub> hubContext)
+        {
+            _hubContext = hubContext;
+        }
+
         public Task OnCompletedAsync()
         {
             return Task.CompletedTask;
@@ -14,11 +23,9 @@ namespace Monitor.API
             return Task.FromException(ex);
         }
 
-        public Task OnNextAsync(string item, StreamSequenceToken token = null)
+        public async Task OnNextAsync(string item, StreamSequenceToken token = null)
         {
-            // TODO: push to signalr
-
-            return Task.CompletedTask;
+            await _hubContext.Clients.All.SendAsync(Constants.NotificationsChannel, item);
         }
     }
 }

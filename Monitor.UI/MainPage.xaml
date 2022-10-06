@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Monitor.UI"
              xmlns:blazor="clr-namespace:Monitor.UI.Blazor;assembly=Monitor.UI.Blazor"
+             xmlns:shared="clr-namespace:Monitor.Shared;assembly=Monitor.Shared"
              x:Class="Monitor.UI.MainPage"
              BackgroundColor="{DynamicResource PageBackgroundColor}">
 

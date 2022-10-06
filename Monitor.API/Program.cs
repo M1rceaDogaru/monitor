@@ -4,18 +4,31 @@ using Monitor.Shared;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
+using Orleans.Streams;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "cors_policy",
+                      builder =>
+                      {
+                          builder.AllowAnyOrigin()
+                             .AllowAnyMethod()
+                             .AllowAnyHeader();
+                      });
+});
 
+// Add services to the container.
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
-builder.Services.AddSingleton(async serviceProvider =>
+builder.Services.AddSingleton<NotificationsObserver>();
+builder.Services.AddSingleton(serviceProvider =>
 {
     var client = new ClientBuilder()
         .UseLocalhostClustering()
@@ -30,18 +43,20 @@ builder.Services.AddSingleton(async serviceProvider =>
         .ConfigureLogging(logging => logging.AddConsole())
         .Build();
 
-    await client.Connect();
+    client.Connect().Wait();
 
     var stream = client
         .GetStreamProvider(Constants.NotificationsChannel)
         .GetStream<string>(Constants.NotificationsStreamId, Constants.NotificationsNamespace);
 
-    await stream.SubscribeAsync(new NotificationsObserver());
+    stream.SubscribeAsync(serviceProvider.GetService<NotificationsObserver>()).Wait();
 
     return client;
 });
 
 var app = builder.Build();
+
+app.UseCors("cors_policy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

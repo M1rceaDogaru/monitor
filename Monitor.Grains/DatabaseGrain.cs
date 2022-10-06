@@ -27,13 +27,13 @@ namespace Monitor.Grains
             return base.OnActivateAsync();
         }
 
-        public Task UpdateState(DatabaseState state)
+        public async Task UpdateState(DatabaseState state)
         {
             var messages = new Messages();
             if (_state == null)
             {
                 SetState(state);
-                return Task.FromResult(messages);
+                return;
             }
 
             if (!state.Equals(_state))
@@ -43,7 +43,10 @@ namespace Monitor.Grains
                 SetState(state);
             }
 
-            return Task.WhenAll(messages.Select(m => _stream.OnNextAsync(m)));
+            foreach (var message in messages)
+            {
+                await _stream.OnNextAsync(message);
+            }
         }
 
         private static Messages CheckRules(DatabaseState oldState, DatabaseState newState)
@@ -56,12 +59,12 @@ namespace Monitor.Grains
 
             if (usersAdded.Any())
             {
-                messages.Add($"Users added: {string.Join(",", usersAdded)}");
+                messages.Add($"Users {string.Join(",", usersAdded)} added to {newState.Key}");
             }
 
             if (usersRemoved.Any())
             {
-                messages.Add($"Users removed: {string.Join(",", usersRemoved)}");
+                messages.Add($"Users {string.Join(",", usersRemoved)} removed from {newState.Key}");
             }
 
             return messages;

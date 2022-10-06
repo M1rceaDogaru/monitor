@@ -26,10 +26,11 @@ static async Task<IHost> StartSiloAsync()
         .UseOrleans(s =>
         {
             s.UseLocalhostClustering()
-            .AddMemoryGrainStorageAsDefault()
+            .AddMemoryGrainStorage("PubSubStore")
             .AddSimpleMessageStreamProvider(Constants.NotificationsChannel, options =>
             {
-                options.FireAndForgetDelivery = true;
+                options.FireAndForgetDelivery = false;
+                options.OptimizeForImmutableData = false;
             })
             .Configure<ClusterOptions>(options =>
             {
