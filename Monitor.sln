@@ -12,9 +12,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monitor.Grains", "Monitor.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monitor.UI.Blazor", "Monitor.UI.Blazor\Monitor.UI.Blazor.csproj", "{F2470B28-49AE-4F59-ACD4-7CB1F6F52D1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor.Agent", "Monitor.Agent\Monitor.Agent.csproj", "{0673940F-EDA8-43AD-A6D9-0B9B9BC2E250}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monitor.Agent", "Monitor.Agent\Monitor.Agent.csproj", "{0673940F-EDA8-43AD-A6D9-0B9B9BC2E250}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor.Shared", "Monitor.Shared\Monitor.Shared.csproj", "{012F12E1-33BF-47E7-A469-697FF08F4E51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monitor.Shared", "Monitor.Shared\Monitor.Shared.csproj", "{012F12E1-33BF-47E7-A469-697FF08F4E51}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{6DB8ECF7-7727-4AB5-A8B9-0D9024F06FB8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{EA8CE699-FC78-41F2-8281-D82881C19188}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +59,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1E09216A-B193-4D5E-BDF6-96A2D63224D1} = {EA8CE699-FC78-41F2-8281-D82881C19188}
+		{6FA5B16B-DD51-4AC3-B8FC-F491E29CED89} = {6DB8ECF7-7727-4AB5-A8B9-0D9024F06FB8}
+		{87C375C5-2A2A-4598-ADA5-887CD70A0647} = {6DB8ECF7-7727-4AB5-A8B9-0D9024F06FB8}
+		{425DD9C1-B490-44A8-A61B-00CF5053973B} = {6DB8ECF7-7727-4AB5-A8B9-0D9024F06FB8}
+		{F2470B28-49AE-4F59-ACD4-7CB1F6F52D1B} = {EA8CE699-FC78-41F2-8281-D82881C19188}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}

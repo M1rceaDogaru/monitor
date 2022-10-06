@@ -1,3 +1,4 @@
+using Monitor.API;
 using Monitor.Grains;
 using Monitor.Shared;
 using Orleans;
@@ -12,7 +13,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton(clientBuilder =>
+builder.Services.AddSignalR();
+
+builder.Services.AddSingleton(async serviceProvider =>
 {
     var client = new ClientBuilder()
         .UseLocalhostClustering()
@@ -26,7 +29,14 @@ builder.Services.AddSingleton(clientBuilder =>
         .AddSimpleMessageStreamProvider(Constants.NotificationsChannel)
         .ConfigureLogging(logging => logging.AddConsole())
         .Build();
-    client.Connect();
+
+    await client.Connect();
+
+    var stream = client
+        .GetStreamProvider(Constants.NotificationsChannel)
+        .GetStream<string>(Constants.NotificationsStreamId, Constants.NotificationsNamespace);
+
+    await stream.SubscribeAsync(new NotificationsObserver());
 
     return client;
 });
@@ -45,5 +55,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<NotificationsHub>($"/{Constants.NotificationsChannel}");
 
 app.Run();

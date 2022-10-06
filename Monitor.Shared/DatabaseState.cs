@@ -2,6 +2,8 @@
 {
     public class DatabaseState
     {
+        public string Key => $"{Host}/{Instance}/{Database}";
+
         public string Host { get; set; }
         public string Instance { get; set; }
         public string Database { get; set; }

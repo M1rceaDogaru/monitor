@@ -19,10 +19,9 @@ namespace Monitor.API.Controllers
         [HttpPut]
         public async Task<IActionResult> NotifyDatabaseState([FromBody] DatabaseState state)
         {
-            var key = state.GetKey();
-            Console.WriteLine($"Received state update for {key}");
+            Console.WriteLine($"Received state update for {state.Key}");
             
-            var databaseGrain = _client.GetGrain<IDatabaseGrain>(key);
+            var databaseGrain = _client.GetGrain<IDatabaseGrain>(state.Key);
             await databaseGrain.UpdateState(state);
             
             return Ok();

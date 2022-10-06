@@ -6,30 +6,33 @@ namespace Monitor.Grains
 {
     public interface IDatabaseGrain : IGrainWithStringKey
     {
-        Task<Messages> UpdateState(DatabaseState state);
+        Task UpdateState(DatabaseState state);
     }
 
     public class DatabaseGrain : Grain, IDatabaseGrain
     {
         private DatabaseState _state;
         private IAsyncStream<string> _stream = null!;
+        private IAllDatabasesGrain _allDatabasesGrain = null!;
 
         public override Task OnActivateAsync()
         {
             var streamProvider = GetStreamProvider(Constants.NotificationsChannel);
 
             _stream = streamProvider.GetStream<string>(
-                Guid.NewGuid(), "default");
+                Constants.NotificationsStreamId, Constants.NotificationsNamespace);
+
+            _allDatabasesGrain = GrainFactory.GetGrain<IAllDatabasesGrain>(Constants.AllDatabasesGrainKey);
 
             return base.OnActivateAsync();
         }
 
-        public Task<Messages> UpdateState(DatabaseState state)
+        public Task UpdateState(DatabaseState state)
         {
             var messages = new Messages();
             if (_state == null)
             {
-                _state = state;
+                SetState(state);
                 return Task.FromResult(messages);
             }
 
@@ -37,10 +40,10 @@ namespace Monitor.Grains
             {
                 // something changed
                 messages.AddRange(CheckRules(_state, state));
-                _state = state;
+                SetState(state);
             }
 
-            return Task.FromResult(messages);
+            return Task.WhenAll(messages.Select(m => _stream.OnNextAsync(m)));
         }
 
         private static Messages CheckRules(DatabaseState oldState, DatabaseState newState)
@@ -62,6 +65,12 @@ namespace Monitor.Grains
             }
 
             return messages;
+        }
+
+        private void SetState(DatabaseState state)
+        {
+            _state = state;
+            _allDatabasesGrain.Upsert(state);
         }
     }
 }
