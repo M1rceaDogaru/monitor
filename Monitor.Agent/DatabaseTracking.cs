@@ -42,6 +42,7 @@ order by username
                 var state = GetDatabaseState();
                 if (_localState == null || !_localState.Equals(state))
                 {
+                    Console.WriteLine($"Found change for {state.Key}");
                     //notify state to mothership
                     _localState = state;
                     NotifyStateChanged();

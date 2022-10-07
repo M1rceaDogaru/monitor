@@ -1,5 +1,7 @@
-﻿using Monitor.Shared;
+﻿using Microsoft.Extensions.Logging;
+using Monitor.Shared;
 using Orleans;
+using Orleans.Placement;
 using Orleans.Streams;
 
 namespace Monitor.Grains
@@ -9,11 +11,19 @@ namespace Monitor.Grains
         Task UpdateState(DatabaseState state);
     }
 
+    [RandomPlacement]
     public class DatabaseGrain : Grain, IDatabaseGrain
     {
         private DatabaseState _state;
         private IAsyncStream<string> _stream = null!;
         private IAllDatabasesGrain _allDatabasesGrain = null!;
+
+        private readonly ILogger<DatabaseGrain> _logger;
+
+        public DatabaseGrain(ILogger<DatabaseGrain> logger)
+        {
+            _logger = logger;
+        }
 
         public override Task OnActivateAsync()
         {
@@ -23,6 +33,8 @@ namespace Monitor.Grains
                 Constants.NotificationsStreamId, Constants.NotificationsNamespace);
 
             _allDatabasesGrain = GrainFactory.GetGrain<IAllDatabasesGrain>(Constants.AllDatabasesGrainKey);
+
+            _logger.LogWarning($"Grain activated for {this.GetPrimaryKeyString()}");
 
             return base.OnActivateAsync();
         }
@@ -43,6 +55,7 @@ namespace Monitor.Grains
                 SetState(state);
             }
 
+            _logger.LogWarning($"State updated for {_state.Key}");
             foreach (var message in messages)
             {
                 await _stream.OnNextAsync(message);
