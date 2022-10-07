@@ -24,8 +24,10 @@ public static class MauiProgram
 		builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
 
-        var connection = new HubConnectionBuilder()
-                .WithUrl($"http://localhost:5257/{Constants.NotificationsChannel}")
+		var baseUrl = "http://localhost:5257";
+
+		var connection = new HubConnectionBuilder()
+                .WithUrl($"{baseUrl}/{Constants.NotificationsChannel}")
                 .Build();
 
         connection.Closed += async (error) =>
