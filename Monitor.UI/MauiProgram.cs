@@ -23,8 +23,11 @@ public static class MauiProgram
 		#if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
-
+#if ANDROID
+		var baseUrl = "http://10.0.2.2:5257";
+#else
 		var baseUrl = "http://localhost:5257";
+#endif
 
 		var connection = new HubConnectionBuilder()
                 .WithUrl($"{baseUrl}/{Constants.NotificationsChannel}")

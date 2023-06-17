@@ -2,7 +2,7 @@
   "profiles": {
     "Monitor.Agent": {
       "commandName": "Project",
-      "commandLineArgs": "--mothership http://localhost:5257 --connection \"Data Source=localhost;User Id=sa;Password=SuperSecurePassword123;Encrypt=true;TrustServerCertificate=true;Initial Catalog=AdventureWorks2017\""
+      "commandLineArgs": "--mothership http://localhost:5257 --connection \"Data Source=localhost;trusted_connection=yes;TrustServerCertificate=yes;Initial Catalog=AdventureWorks2017\""
     }
   }
 }
